@@ -42,9 +42,11 @@ public class WebClient {
     public CompletableFuture<String> sendTask(String url, byte[] payload) {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofByteArray(payload))
+                .header("X-Debug", "true")
                 .uri(URI.create(url))
                 .build();
 
-        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(HttpResponse::body);
+        return client.sendAsync(request, HttpResponse.BodyHandlers.ofString()).thenApply(response -> response.body()
+                + response.headers().firstValue("X-Debug-Info").get().toString());
     }
 }
