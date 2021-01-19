@@ -28,6 +28,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Aggregator {
     private WebClient webClient;
@@ -48,11 +50,6 @@ public class Aggregator {
            futures[i] = webClient.sendTask(workerAddress, requestPayload);
        }
 
-       List<String> results = new ArrayList<>();
-       for (int i = 0; i < tasks.size(); i++) {
-           results.add(futures[i].join());
-       }
-
-       return results;
+       return Stream.of(futures).map(CompletableFuture::join).collect(Collectors.toList());
    }
 }
